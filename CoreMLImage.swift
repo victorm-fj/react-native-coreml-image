@@ -142,7 +142,7 @@ public class CoreMLImage: UIView, AVCaptureVideoDataOutputSampleBufferDelegate, 
     self.onCapturedPhoto!(["imageData": strBase64])
   }
 
-  @objc func takePhoto() {
+  public func takePhoto() {
     self.captureSession?.removeOutput(videoDataOutput)
     let photoSettings = AVCapturePhotoSettings()
     photoSettings.flashMode = .auto
