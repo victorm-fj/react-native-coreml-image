@@ -136,14 +136,14 @@ public class CoreMLImage: UIView, AVCaptureVideoDataOutputSampleBufferDelegate, 
   }
 
   @available(iOS 11.0, *)
-  func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+  public func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
     let imageData = photo.fileDataRepresentation()
     let strBase64: String = (imageData?.base64EncodedString(options: .lineLength64Characters))!
-    self.onCapturedPhoto!(strBase64)
+    self.onCapturedPhoto!(["imageData": strBase64])
   }
 
   @objc func takePhoto() {
-    self.captureSession.removeOutput(videoDataOutput)
+    self.captureSession?.removeOutput(videoDataOutput)
     let photoSettings = AVCapturePhotoSettings()
     photoSettings.flashMode = .auto
     photoSettings.isAutoStillImageStabilizationEnabled =
