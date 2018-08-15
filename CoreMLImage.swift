@@ -11,7 +11,7 @@ import Vision
 
 @available(iOS 11.0, *)
 @objc(CoreMLImage)
-public class CoreMLImage: UIView, AVCaptureVideoDataOutputSampleBufferDelegate {
+public class CoreMLImage: UIView, AVCaptureVideoDataOutputSampleBufferDelegate, AVCapturePhotoCaptureDelegate {
   
   var bridge: RCTEventDispatcher!
   var captureSession: AVCaptureSession?
@@ -19,6 +19,9 @@ public class CoreMLImage: UIView, AVCaptureVideoDataOutputSampleBufferDelegate {
   var model: VNCoreMLModel?
   var lastClassification: String = ""
   var onClassification: RCTBubblingEventBlock?
+  var onCapturedPhoto: RCTBubblingEventBlock?
+  var videoDataOutput = AVCaptureVideoDataOutput()
+  var photoOutput = AVCapturePhotoOutput()
   
   required public init(coder aDecoder: NSCoder) {
     super.init(coder: aDecoder)!
@@ -108,14 +111,21 @@ public class CoreMLImage: UIView, AVCaptureVideoDataOutputSampleBufferDelegate {
         
         view.layer.addSublayer(videoPreviewLayer!)
         self.addSubview(view)
+
+        self.photoOutput.isHighResolutionCaptureEnabled = true
+        self.photoOutput.isLivePhotoCaptureEnabled = self.photoOutput.isLivePhotoCaptureSupported
         
-        let videoDataOutput = AVCaptureVideoDataOutput()
         let queue = DispatchQueue(label: "xyz.jigswaw.ml.queue")
-        videoDataOutput.setSampleBufferDelegate(self, queue: queue)
-        guard (self.captureSession?.canAddOutput(videoDataOutput))! else {
+        self.videoDataOutput.setSampleBufferDelegate(self, queue: queue)
+        guard (self.captureSession?.canAddOutput(self.videoDataOutput))! else {
           fatalError()
         }
-        self.captureSession?.addOutput(videoDataOutput)
+        guard (self.captureSession?.canAddOutput(self.photoOutput))! else {
+          fatalError()
+        }
+        self.captureSession?.sessionPreset = .photo
+        self.captureSession?.addOutput(self.videoDataOutput)
+        self.captureSession?.addOutput(self.photoOutput)
         self.captureSession?.startRunning()
       }
       
@@ -123,6 +133,22 @@ public class CoreMLImage: UIView, AVCaptureVideoDataOutputSampleBufferDelegate {
       print(error)
     }
     
+  }
+
+  @available(iOS 11.0, *)
+  func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+    let imageData = photo.fileDataRepresentation()
+    let strBase64: String = (imageData?.base64EncodedString(options: .lineLength64Characters))!
+    self.onCapturedPhoto!(strBase64)
+  }
+
+  @objc func takePhoto() {
+    self.captureSession.removeOutput(videoDataOutput)
+    let photoSettings = AVCapturePhotoSettings()
+    photoSettings.flashMode = .auto
+    photoSettings.isAutoStillImageStabilizationEnabled =
+      photoOutput.isStillImageStabilizationSupported
+    photoOutput.capturePhoto(with: photoSettings, delegate: self)
   }
   
   @objc(setModelFile:) public func setModelFile(modelFile: String) {
@@ -144,7 +170,9 @@ public class CoreMLImage: UIView, AVCaptureVideoDataOutputSampleBufferDelegate {
     self.onClassification = onClassification
   }
   
-  
+  @objc(setOnCapturedPhoto:) public func setOnCapturedPhoto(onCapturedPhoto: @escaping RCTBubblingEventBlock) {
+    self.onCapturedPhoto = onCapturedPhoto
+  }
   
 }
 
