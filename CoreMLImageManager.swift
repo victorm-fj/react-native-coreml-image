@@ -3,13 +3,14 @@ import Foundation
 @available(iOS 11.0, *)
 @objc(CoreMLImageManager)
 class CoreMLImageManager: RCTViewManager {
+  var coreMLImage = CoreMLImage()
   
   override func view() -> UIView! {
-    return CoreMLImage();
+    return coreMLImage
   }
 
   @objc func takePhoto() -> Void {
-    CoreMLImage.takePhoto();
+    coreMLImage.takePhoto()
   }
   
   override static func requiresMainQueueSetup() -> Bool {
