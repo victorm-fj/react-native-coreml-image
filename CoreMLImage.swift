@@ -111,9 +111,6 @@ public class CoreMLImage: UIView, AVCaptureVideoDataOutputSampleBufferDelegate, 
         
         view.layer.addSublayer(videoPreviewLayer!)
         self.addSubview(view)
-
-        self.photoOutput.isHighResolutionCaptureEnabled = true
-        self.photoOutput.isLivePhotoCaptureEnabled = self.photoOutput.isLivePhotoCaptureSupported
         
         let queue = DispatchQueue(label: "xyz.jigswaw.ml.queue")
         self.videoDataOutput.setSampleBufferDelegate(self, queue: queue)
@@ -146,8 +143,8 @@ public class CoreMLImage: UIView, AVCaptureVideoDataOutputSampleBufferDelegate, 
     self.captureSession?.removeOutput(videoDataOutput)
     let photoSettings = AVCapturePhotoSettings()
     photoSettings.flashMode = .auto
-    photoSettings.isAutoStillImageStabilizationEnabled =
-      photoOutput.isStillImageStabilizationSupported
+    photoSettings.isAutoStillImageStabilizationEnabled = true
+    photoSettings.isHighResolutionPhotoEnabled = false
     photoOutput.capturePhoto(with: photoSettings, delegate: self)
   }
   

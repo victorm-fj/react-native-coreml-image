@@ -49,8 +49,8 @@ export default class CoreMLImageView extends Component {
 				onClassification={evt => this.onClassification(evt)}
 				onCapturedPhoto={evt => this.onCapturedPhoto(evt)}
 				style={{
-					width: Dimensions.get('window').width,
-					height: Dimensions.get('window').height,
+					width: Dimensions.get('window').width * 0.7,
+					height: Dimensions.get('window').height * 0.6,
 				}}
 			>
 				<View style={localStyles.overlay}>{this.props.children}</View>
