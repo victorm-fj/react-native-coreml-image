@@ -11,7 +11,7 @@ class CoreMLImageManager: RCTViewManager {
 
   @objc func takePhoto() {
     DispatchQueue.main.async {
-      coreMLImage.takePhoto()
+      self.coreMLImage.takePhoto()
     }
   }
   
