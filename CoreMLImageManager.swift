@@ -9,8 +9,10 @@ class CoreMLImageManager: RCTViewManager {
     return coreMLImage
   }
 
-  @objc func takePhoto() -> Void {
-    coreMLImage.takePhoto()
+  @objc func takePhoto() {
+    DispatchQueue.main.async {
+      coreMLImage.takePhoto()
+    }
   }
   
   override static func requiresMainQueueSetup() -> Bool {

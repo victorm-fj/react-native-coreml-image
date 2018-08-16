@@ -27,46 +27,46 @@ import {
 	View,
 } from 'react-native';
 
-export default requireNativeComponent('CoreMLImage', null);
+const CoreMLImageNative = requireNativeComponent('CoreMLImage', null);
 
-// export default class CoreMLImageView extends Component {
+export default class CoreMLImageView extends Component {
+	onClassification(evt) {
+		if (this.props.onClassification) {
+			this.props.onClassification(evt.nativeEvent.classifications);
+		}
+	}
 
-// 	onClassification(evt) {
-// 		if (this.props.onClassification) {
-// 			this.props.onClassification(evt.nativeEvent.classifications);
-// 		}
-// 	}
+	onCapturedPhoto(evt) {
+		if (this.props.onCapturedPhoto) {
+			this.props.onCapturedPhoto(evt.nativeEvent.imageData);
+		}
+	}
 
-// 	onCapturedPhoto(evt) {
-// 		if (this.props.onCapturedPhoto) {
-// 			this.props.onCapturedPhoto(evt.nativeEvent.imageData);
-// 		}
-// 	}
+	render() {
+		return (
+			<CoreMLImageNative
+				modelFile={this.props.modelFile}
+				onClassification={evt => this.onClassification(evt)}
+				onCapturedPhoto={evt => this.onCapturedPhoto(evt)}
+				style={{
+					width: Dimensions.get('window').width,
+					height: Dimensions.get('window').height,
+				}}
+			>
+				<View style={localStyles.overlay}>{this.props.children}</View>
+			</CoreMLImageNative>
+		);
+	}
+}
 
-// 	render() {
-// 		return (
-// 			<CoreMLImageNative
-// 				modelFile={this.props.modelFile}
-// 				onClassification={(evt) => this.onClassification(evt)}
-// 				onCapturedPhoto={(evt) => this.onCapturedPhoto(evt)}
-// 				style={{width: Dimensions.get("window").width, height: Dimensions.get("window").height}}
-// 			>
-// 				<View style={localStyles.overlay}>
-// 					{this.props.children}
-// 				</View>
-// 			</CoreMLImageNative>
-// 		)
-// 	}
-// }
-
-// const localStyles = StyleSheet.create({
-// 	overlay: {
-// 		position: "absolute",
-// 		top: 0,
-// 		left: 0,
-// 		right: 0,
-// 		bottom: 0,
-// 		zIndex: 999,
-// 		backgroundColor: "transparent"
-// 	}
-// });
+const localStyles = StyleSheet.create({
+	overlay: {
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		right: 0,
+		bottom: 0,
+		zIndex: 999,
+		backgroundColor: 'transparent',
+	},
+});
