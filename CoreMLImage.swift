@@ -140,7 +140,7 @@ public class CoreMLImage: UIView, AVCaptureVideoDataOutputSampleBufferDelegate, 
   }
 
   public func takePhoto() {
-    self.captureSession?.removeOutput(videoDataOutput)
+    // self.captureSession?.removeOutput(videoDataOutput)
     let photoSettings = AVCapturePhotoSettings()
     photoSettings.flashMode = .auto
     photoSettings.isAutoStillImageStabilizationEnabled = true
