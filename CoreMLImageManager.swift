@@ -2,16 +2,15 @@ import Foundation
 
 @available(iOS 11.0, *)
 @objc(CoreMLImageManager)
-class CoreMLImageManager: RCTViewManager {
-  var coreMLImage = CoreMLImage()
-  
+class CoreMLImageManager: RCTViewManager {  
   override func view() -> UIView! {
-    return coreMLImage
+    return CoreMLImage()
   }
 
-  @objc func takePhoto() {
+  @objc func takePhoto(_ node:NSNumber) {
     DispatchQueue.main.async {
-      self.coreMLImage.takePhoto()
+      let coreML = self.bridge.uiManager.view(forReactTag: node) as! CoreMLImage
+      coreML.takePhoto()
     }
   }
   

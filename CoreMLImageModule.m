@@ -5,5 +5,5 @@
 RCT_EXPORT_VIEW_PROPERTY(modelFile, NSString);
 RCT_EXPORT_VIEW_PROPERTY(onClassification, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onCapturedPhoto, RCTBubblingEventBlock);
-RCT_EXTERN_METHOD(takePhoto)
+RCT_EXTERN_METHOD(takePhoto:(nonnull NSNumber *)node)
 @end
