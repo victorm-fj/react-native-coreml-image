@@ -135,7 +135,8 @@ public class CoreMLImage: UIView, AVCaptureVideoDataOutputSampleBufferDelegate, 
   @available(iOS 11.0, *)
   public func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
     let imageData = photo.fileDataRepresentation()
-    let strBase64: String = (imageData?.base64EncodedString(options: .lineLength64Characters))!
+    let uiImage = UIImage.init(data: imageData!)?.resizeImage()
+    let strBase64: String = (uiImage?.base64EncodedString(options: .lineLength64Characters))!
     self.onCapturedPhoto!(["imageData": strBase64])
   }
 
@@ -173,3 +174,40 @@ public class CoreMLImage: UIView, AVCaptureVideoDataOutputSampleBufferDelegate, 
   
 }
 
+extension UIImage {
+    func resizeImage() -> Data {
+        var actualHeight = Float(self.size.height)
+        var actualWidth = Float(self.size.width)
+        let maxHeight: Float = 400.0
+        let maxWidth: Float = 300.0
+        var imgRatio: Float = actualWidth / actualHeight
+        let maxRatio: Float = maxWidth / maxHeight
+        let compressionQuality: Float = 0.33
+        //50 percent compression
+        if actualHeight > maxHeight || actualWidth > maxWidth {
+            if imgRatio < maxRatio {
+                //adjust width according to maxHeight
+                imgRatio = maxHeight / actualHeight
+                actualWidth = imgRatio * actualWidth
+                actualHeight = maxHeight
+            }
+            else if imgRatio > maxRatio {
+                //adjust height according to maxWidth
+                imgRatio = maxWidth / actualWidth
+                actualHeight = imgRatio * actualHeight
+                actualWidth = maxWidth
+            }
+            else {
+                actualHeight = maxHeight
+                actualWidth = maxWidth
+            }
+        }
+        let rect = CGRect(x: 0.0, y: 0.0, width: CGFloat(actualWidth), height: CGFloat(actualHeight))
+        UIGraphicsBeginImageContext(rect.size)
+        self.draw(in: rect)
+        let img = UIGraphicsGetImageFromCurrentImageContext()
+        let imageData = UIImageJPEGRepresentation(img!, CGFloat(compressionQuality))
+        UIGraphicsEndImageContext()
+        return imageData!
+    }
+}
